@@ -6,12 +6,13 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType textInputType;
 
-  const CustomTextField(
-      {super.key,
-      required this.hintText,
-      this.obscureText = false,
-      required this.controller,
-      this.textInputType = TextInputType.text});
+  const CustomTextField({
+    super.key,
+    required this.hintText,
+    this.obscureText = false,
+    required this.controller,
+    this.textInputType = TextInputType.text,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +26,9 @@ class CustomTextField extends StatelessWidget {
             TextInputAction.next, // ✅ Moves to next field when Enter is pressed
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.black,
-          ),
+          hintStyle: TextStyle(color: Colors.black),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.8),
+          fillColor: Colors.white.withOpacity(0.6),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,

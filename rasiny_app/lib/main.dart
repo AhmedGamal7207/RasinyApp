@@ -1,8 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:rasiny_app/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:rasiny_app/screens/home_screen.dart';
 import 'screens/sign_in_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -15,7 +20,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Rasiny App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const SignInScreen(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return HomeScreen();
+          } else {
+            return SignInScreen();
+          }
+        },
+      ),
       routes: appRoutes,
     );
   }

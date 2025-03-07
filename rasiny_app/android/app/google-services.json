@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "187923177852",
+    "project_id": "rasiny-app",
+    "storage_bucket": "rasiny-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187923177852:android:7a77a68ab48cd4f496c4f9",
+        "android_client_info": {
+          "package_name": "com.example.rasiny_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbLeqQqsszJ_YzMmvN36olHbmtAfCTIFc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
