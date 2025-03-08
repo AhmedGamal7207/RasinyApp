@@ -13,7 +13,7 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController phoneController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
-    void login() async {
+    /*void login() async {
       showDialog(
         context: context,
         builder: (context) {
@@ -26,7 +26,7 @@ class SignInScreen extends StatelessWidget {
           password: passwordController.text,
         );
         if (context.mounted) {
-          Navigator.pop(context);
+          Navigator.of(context).pop();
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -51,6 +51,53 @@ class SignInScreen extends StatelessWidget {
             "Network Error",
             "Please check your network connection and try again.",
           );
+        }
+      }
+    }*/
+
+    void login() async {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false, // Prevents dismissing by tapping outside
+        builder: (context) => Center(child: CircularProgressIndicator()),
+      );
+
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: "${phoneController.text.trim()}@rasiny.com",
+          password: passwordController.text,
+        );
+
+        if (context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+            (route) => false,
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        if (context.mounted) {
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(); // Ensure dialog is closed before error message
+        }
+
+        String title = "Error";
+        String message = "An unexpected error occurred.";
+
+        if (e.code == "invalid-credential") {
+          title = "Wrong Data";
+          message = "You have entered the wrong phone number or password.";
+        } else {
+          title = "Network Error";
+          message = "Please check your network connection and try again.";
+        }
+
+        if (context.mounted) {
+          displayMessageToUser(context, title, message);
         }
       }
     }

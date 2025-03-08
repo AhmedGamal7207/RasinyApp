@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 
 class FeatureTile extends StatelessWidget {
@@ -5,12 +7,14 @@ class FeatureTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final Color color;
+  void Function()? onTap;
 
-  const FeatureTile({
+  FeatureTile({
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.color,
+    this.onTap,
     super.key,
   });
 
@@ -28,9 +32,7 @@ class FeatureTile extends StatelessWidget {
         title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle, style: TextStyle(color: Colors.grey[600])),
         trailing: Icon(Icons.arrow_forward_ios_rounded, color: Colors.grey),
-        onTap: () {
-          // Action when tapped
-        },
+        onTap: onTap ?? () {},
       ),
     );
   }

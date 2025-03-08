@@ -16,9 +16,9 @@ Future<void> saveUserData(
 Future<Map<String, String?>> getUserData() async {
   final prefs = await SharedPreferences.getInstance();
   return {
-    "email": prefs.getString('email'),
-    "phone": prefs.getString('phone'),
-    "name": prefs.getString('name'),
-    "nationalID": prefs.getString('nationalID'),
+    "email": prefs.getString('email') ?? '',
+    "phone": prefs.getString('phone') ?? '',
+    "name": prefs.getString('name') ?? '',
+    "nationalID": prefs.getString('nationalID') ?? '',
   };
 }

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-void displayMessageToUser(BuildContext context, String title, String message) {
+void displayMessageToUser(
+  BuildContext context,
+  String title,
+  String message, {
+  Color color = Colors.red,
+  void Function()? onPressed,
+}) {
+  onPressed ??= () => Navigator.of(context).pop();
   showDialog(
     context: context,
     builder: (context) {
@@ -13,7 +20,7 @@ void displayMessageToUser(BuildContext context, String title, String message) {
           children: [
             Icon(
               Icons.error,
-              color: Colors.red,
+              color: color,
               size: 50, // Big eye-catching icon
             ),
             const SizedBox(height: 10),
@@ -38,9 +45,9 @@ void displayMessageToUser(BuildContext context, String title, String message) {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: onPressed,
             style: TextButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: color,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),

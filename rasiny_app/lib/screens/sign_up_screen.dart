@@ -23,11 +23,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     TextEditingController phoneController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     TextEditingController confirmPasswordController = TextEditingController();
-    nameController.text = "Ahmed Gamal";
+    /*nameController.text = "Ahmed Gamal";
     idController.text = "30312190300176";
     phoneController.text = "01145531800";
     passwordController.text = "123456";
-    confirmPasswordController.text = "123456";
+    confirmPasswordController.text = "123456";*/
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

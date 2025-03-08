@@ -23,4 +23,20 @@ class Constants {
     color: Colors.white,
     fontFamily: 'loginTitleFont',
   );
+
+  static const featuresTitles = {
+    "parking": "Wrong Parking",
+    "tint": "Tinted Windows",
+    "stickers": "Stickers",
+    "wrong_way": "Wrong-Way Driving",
+    "modified": "Modified Cars",
+  };
+  static const inverseFeaturesTitles = {
+    "Wrong Parking": "parking",
+    "Tinted Windows": "tint",
+    "Stickers": "stickers",
+    "Wrong-Way Driving": "wrong_way",
+    "Modified Cars": "modified",
+  };
+  static const possibleStatuses = ["under_review", "approved", "rejected"];
 }

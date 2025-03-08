@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rasiny_app/screens/capture_car_screen.dart';
 import 'package:rasiny_app/services/shared_preferences.dart';
+import 'package:rasiny_app/utils/constants.dart';
 import 'package:rasiny_app/widgets/custom_drawer.dart';
 import 'package:rasiny_app/widgets/custom_tile.dart';
 
@@ -55,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "${name} ♥",
+                          "$name ♥",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -67,31 +69,73 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(height: 30),
                     FeatureTile(
                       icon: Icons.directions_car,
-                      title: "Double Parking",
+                      title: Constants.featuresTitles["parking"]!,
                       subtitle:
-                          "Illegally parking beside another parked vehicle.",
+                          "Illegally parking beside another parked vehicle or in a wrong place.",
                       color: Colors.blueAccent,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return CaptureCarScreen(
+                                title: Constants.featuresTitles["parking"]!,
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 15),
                     FeatureTile(
                       icon: Icons.visibility_off,
-                      title: "Tinted Windows",
+                      title: Constants.featuresTitles["tint"]!,
                       subtitle: "Using overly dark or illegal window tints.",
                       color: Colors.greenAccent,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return CaptureCarScreen(
+                                title: Constants.featuresTitles["tint"]!,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 15),
+                    FeatureTile(
+                      icon: Icons.sticky_note_2_outlined,
+                      title: Constants.featuresTitles["stickers"]!,
+                      subtitle: "Cars with illegal stickers.",
+                      color: Colors.orangeAccent,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return CaptureCarScreen(
+                                title: Constants.featuresTitles["stickers"]!,
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 15),
                     FeatureTile(
                       icon: Icons.warning,
-                      title: "Wrong-Way Driving",
+                      title: Constants.featuresTitles["wrong_way"]!,
                       subtitle: "Driving against the designated traffic flow.",
                       color: Colors.orangeAccent,
                     ),
                     SizedBox(height: 15),
                     FeatureTile(
-                      icon: Icons.traffic,
-                      title: "Running a Red Light",
-                      subtitle:
-                          "Crossing an intersection while the light is red.",
+                      icon: Icons.electric_moped_outlined,
+                      title: Constants.featuresTitles["modified"]!,
+                      subtitle: "Cars that are illegaly modified.",
                       color: Colors.purpleAccent,
                     ),
                   ],
