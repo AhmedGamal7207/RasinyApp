@@ -164,8 +164,8 @@ class OtpScreen extends StatelessWidget {
                             color: Colors.black,
                           ), // Icon color
                           const SizedBox(width: 10),
-                          const Text(
-                            'XXXXXXXXXX51',
+                          Text(
+                            phone!,
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,

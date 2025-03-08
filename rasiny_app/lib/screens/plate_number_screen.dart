@@ -276,79 +276,85 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("License Plate - ${widget.title}")),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.file(widget.imageFile, height: 200),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Please enter the license plate number:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            _buildLicensePlateInput(),
-            const SizedBox(height: 30),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    spreadRadius: 2,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+      appBar: AppBar(title: Text(widget.title)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.file(
+                  widget.imageFile,
+                  height: 200,
+                  fit: BoxFit.contain,
+                ),
               ),
-              child: TextField(
-                controller: _commentController,
-                maxLines: 3,
-                style: TextStyle(fontSize: 16),
-                decoration: InputDecoration(
-                  hintText: "Add a comment...",
-                  hintStyle: TextStyle(color: Colors.grey[600]),
-                  prefixIcon: Icon(Icons.comment, color: Colors.grey[700]),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
+              const SizedBox(height: 20),
+              const Text(
+                "Please enter the license plate number:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              _buildLicensePlateInput(),
+              const SizedBox(height: 30),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _commentController,
+                  maxLines: 3,
+                  style: TextStyle(fontSize: 16),
+                  decoration: InputDecoration(
+                    hintText: "Add a comment...",
+                    hintStyle: TextStyle(color: Colors.grey[600]),
+                    prefixIcon: Icon(Icons.comment, color: Colors.grey[700]),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _submitPlateNumber,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 14,
-                  horizontal: 40,
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _submitPlateNumber,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 40,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                child:
+                    _isLoading
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text("Confirm"),
               ),
-              child:
-                  _isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text("Confirm"),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

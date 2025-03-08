@@ -68,7 +68,7 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
                 data['imageUrl'],
                 height: 150,
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 10),
