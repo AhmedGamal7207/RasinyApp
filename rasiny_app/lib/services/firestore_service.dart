@@ -42,7 +42,7 @@ class FirestoreService {
       'numbers': numbers,
       'latitude': latitude,
       'longitude': longitude,
-      'violation': violation,
+      'violation': Constants.violationStatements[violation],
       'status': "Under Review",
       'announcerPhone': announcerPhone,
       'announcerNationalID': announcerNationalID,

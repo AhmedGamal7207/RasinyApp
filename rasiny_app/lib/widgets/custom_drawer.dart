@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -20,14 +21,14 @@ class MyDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.home, color: Colors.grey[600]),
-              title: Text("H O M E"),
+              title: Text(AppLocalizations.of(context)!.drawer_home),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
               leading: Icon(Icons.person, color: Colors.grey[600]),
-              title: Text("P R O F I L E"),
+              title: Text(AppLocalizations.of(context)!.drawer_profile),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/profile");
@@ -35,7 +36,7 @@ class MyDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.rule_sharp, color: Colors.grey[600]),
-              title: Text("V I O L A T I O N S"),
+              title: Text(AppLocalizations.of(context)!.drawer_violations),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/violations");
@@ -44,7 +45,7 @@ class MyDrawer extends StatelessWidget {
             Expanded(child: Container()),
             ListTile(
               leading: Icon(Icons.logout, color: Colors.grey[600]),
-              title: Text("L O G O U T"),
+              title: Text(AppLocalizations.of(context)!.drawer_logout),
               onTap: () {
                 logout();
                 Navigator.pushReplacementNamed(context, "/sign_in");

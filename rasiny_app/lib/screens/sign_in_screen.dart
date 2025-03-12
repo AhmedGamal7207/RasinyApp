@@ -5,6 +5,7 @@ import 'package:rasiny_app/utils/common_functions.dart';
 import 'package:rasiny_app/utils/constants.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -13,47 +14,6 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController phoneController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
-    /*void login() async {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return Center(child: CircularProgressIndicator());
-        },
-      );
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: "${phoneController.text.trim()}@rasiny.com",
-          password: passwordController.text,
-        );
-        if (context.mounted) {
-          Navigator.of(context).pop();
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return HomeScreen();
-              },
-            ),
-            (route) => false,
-          );
-        }
-      } on FirebaseAuthException catch (e) {
-        Navigator.pop(context);
-        if (e.code == "invalid-credential") {
-          displayMessageToUser(
-            context,
-            "Wrong Data",
-            "You have entered wrong phone number or password.",
-          );
-        } else {
-          displayMessageToUser(
-            context,
-            "Network Error",
-            "Please check your network connection and try again.",
-          );
-        }
-      }
-    }*/
 
     void login() async {
       // Show loading dialog
@@ -85,15 +45,15 @@ class SignInScreen extends StatelessWidget {
           ).pop(); // Ensure dialog is closed before error message
         }
 
-        String title = "Error";
-        String message = "An unexpected error occurred.";
+        String title = AppLocalizations.of(context)!.error;
+        String message = AppLocalizations.of(context)!.unexpectedError;
 
         if (e.code == "invalid-credential") {
-          title = "Wrong Data";
-          message = "You have entered the wrong phone number or password.";
+          title = AppLocalizations.of(context)!.wrongData;
+          message = AppLocalizations.of(context)!.invalidCredentials;
         } else {
-          title = "Network Error";
-          message = "Please check your network connection and try again.";
+          title = AppLocalizations.of(context)!.networkError;
+          message = AppLocalizations.of(context)!.checkNetwork;
         }
 
         if (context.mounted) {
@@ -130,15 +90,18 @@ class SignInScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Sign in', style: Constants.kLoginTitleStyle),
+                  Text(
+                    AppLocalizations.of(context)!.signIn, // Sign in
+                    style: Constants.kLoginTitleStyle,
+                  ),
                   SizedBox(height: 40),
                   CustomTextField(
-                    hintText: 'Phone Number...',
+                    hintText: AppLocalizations.of(context)!.phoneNumber,
                     controller: phoneController,
                     textInputType: TextInputType.phone,
                   ),
                   CustomTextField(
-                    hintText: 'Password...',
+                    hintText: AppLocalizations.of(context)!.password,
                     controller: passwordController,
                     obscureText: true,
                   ),
@@ -149,7 +112,7 @@ class SignInScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          'Forgot Your Password...?',
+                          AppLocalizations.of(context)!.forgotPassword,
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -157,21 +120,21 @@ class SignInScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   CustomButton(
-                    text: 'Sign in',
+                    text: AppLocalizations.of(context)!.signIn,
                     onPressed: () {
                       if (phoneController.text.isEmpty) {
                         displayMessageToUser(
                           context,
-                          "Phone Number Error",
-                          "Please fill in the Phone Number; You can't leave it empty.",
+                          AppLocalizations.of(context)!.phoneError,
+                          AppLocalizations.of(context)!.emptyPhone,
                         );
                         return;
                       }
                       if (passwordController.text.isEmpty) {
                         displayMessageToUser(
                           context,
-                          "Password Error",
-                          "Please enter a password; it cannot be empty.",
+                          AppLocalizations.of(context)!.passwordError,
+                          AppLocalizations.of(context)!.emptyPassword,
                         );
                         return;
                       }
@@ -181,13 +144,13 @@ class SignInScreen extends StatelessWidget {
                   const SizedBox(height: 50),
                   GestureDetector(
                     onTap: () => Navigator.pushNamed(context, '/sign_up'),
-                    child: const Text.rich(
+                    child: Text.rich(
                       TextSpan(
-                        text: "Don't Have Account? ",
+                        text: AppLocalizations.of(context)!.noAccount,
                         style: TextStyle(color: Colors.white),
                         children: [
                           TextSpan(
-                            text: "SIGN UP",
+                            text: AppLocalizations.of(context)!.signUpCapital,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],

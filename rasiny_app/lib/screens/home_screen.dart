@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:rasiny_app/screens/capture_car_screen.dart';
 import 'package:rasiny_app/services/shared_preferences.dart';
-import 'package:rasiny_app/utils/constants.dart';
 import 'package:rasiny_app/widgets/custom_drawer.dart';
 import 'package:rasiny_app/widgets/custom_tile.dart';
 
@@ -20,19 +20,31 @@ class HomeScreen extends StatelessWidget {
           .get();
     }
 
+    AppLocalizations local = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text("Home"), centerTitle: true),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.home_title),
+        centerTitle: true,
+      ),
       body: FutureBuilder(
         future: getUserDetails(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
+            return Center(
+              child: Text(
+                AppLocalizations.of(
+                  context,
+                )!.error_message(snapshot.error.toString()),
+              ),
+            );
           } else if (snapshot.hasData) {
             Map<String, dynamic>? userData = snapshot.data!.data();
             if (userData == null) {
-              return Center(child: Text("User data not found."));
+              return Center(
+                child: Text(AppLocalizations.of(context)!.user_data_not_found),
+              );
             }
             String email = userData["email"];
             String phone = userData["phone"];
@@ -50,7 +62,7 @@ class HomeScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Text(
-                          "Hello, ",
+                          AppLocalizations.of(context)!.hello,
                           style: TextStyle(
                             fontSize: 18,
                             fontFamily: "smallTextFont",
@@ -69,18 +81,15 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(height: 30),
                     FeatureTile(
                       icon: Icons.directions_car,
-                      title: Constants.featuresTitles["parking"]!,
-                      subtitle:
-                          "Illegally parking beside another parked vehicle or in a wrong place.",
+                      title: local.parking,
+                      subtitle: AppLocalizations.of(context)!.illegally_parking,
                       color: Colors.blueAccent,
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return CaptureCarScreen(
-                                title: Constants.featuresTitles["parking"]!,
-                              );
+                              return CaptureCarScreen(title: local.parking);
                             },
                           ),
                         );
@@ -89,17 +98,15 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(height: 15),
                     FeatureTile(
                       icon: Icons.visibility_off,
-                      title: Constants.featuresTitles["tint"]!,
-                      subtitle: "Using overly dark or illegal window tints.",
+                      title: local.tint,
+                      subtitle: AppLocalizations.of(context)!.using_dark_tint,
                       color: Colors.greenAccent,
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return CaptureCarScreen(
-                                title: Constants.featuresTitles["tint"]!,
-                              );
+                              return CaptureCarScreen(title: local.tint);
                             },
                           ),
                         );
@@ -108,17 +115,15 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(height: 15),
                     FeatureTile(
                       icon: Icons.sticky_note_2_outlined,
-                      title: Constants.featuresTitles["stickers"]!,
-                      subtitle: "Cars with illegal stickers.",
+                      title: local.stickers,
+                      subtitle: AppLocalizations.of(context)!.illegal_stickers,
                       color: Colors.orangeAccent,
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return CaptureCarScreen(
-                                title: Constants.featuresTitles["stickers"]!,
-                              );
+                              return CaptureCarScreen(title: local.stickers);
                             },
                           ),
                         );
@@ -127,15 +132,16 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(height: 15),
                     FeatureTile(
                       icon: Icons.warning,
-                      title: Constants.featuresTitles["wrong_way"]!,
-                      subtitle: "Driving against the designated traffic flow.",
+                      title: local.stickers,
+                      subtitle: AppLocalizations.of(context)!.wrong_way_driving,
                       color: Colors.orangeAccent,
                     ),
                     SizedBox(height: 15),
                     FeatureTile(
                       icon: Icons.electric_moped_outlined,
-                      title: Constants.featuresTitles["modified"]!,
-                      subtitle: "Cars that are illegaly modified.",
+                      title: local.modified,
+                      subtitle:
+                          AppLocalizations.of(context)!.illegally_modified,
                       color: Colors.purpleAccent,
                     ),
                   ],
@@ -143,7 +149,9 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           } else {
-            return Center(child: Text("Error retrieving your data."));
+            return Center(
+              child: Text(AppLocalizations.of(context)!.error_retrieving_data),
+            );
           }
         },
       ),

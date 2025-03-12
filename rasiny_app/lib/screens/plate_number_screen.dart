@@ -8,6 +8,7 @@ import 'package:rasiny_app/services/cloudinary_service.dart';
 import 'package:rasiny_app/services/firestore_service.dart';
 import 'package:rasiny_app/utils/common_functions.dart';
 import 'package:rasiny_app/utils/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class PlateNumberScreen extends StatefulWidget {
   final File imageFile;
@@ -69,8 +70,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
 
     if (letters.isEmpty || numbers.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please enter at least one letter and one number."),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.plate_number_error),
         ),
       );
       return;
@@ -102,7 +103,6 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
               Constants.inverseFeaturesTitles[widget.title]!,
             );
             if (imageUrl != null) {
-              print("Image uploaded successfully: $imageUrl");
               await FirestoreService.addAnnouncement(
                 letters,
                 numbers,
@@ -117,8 +117,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
             } else {
               displayMessageToUser(
                 context,
-                "Image Upload Error.",
-                "Image couldn't be uploaded. It may be a network error.",
+                AppLocalizations.of(context)!.image_upload_error,
+                AppLocalizations.of(context)!.image_upload_failed,
               );
               setState(() {
                 _isLoading = false;
@@ -128,8 +128,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
           } else {
             displayMessageToUser(
               context,
-              "User data not found.",
-              "Please complete your profile to proceed.",
+              AppLocalizations.of(context)!.user_data_not_found,
+              AppLocalizations.of(context)!.complete_profile,
             );
             setState(() {
               _isLoading = false;
@@ -139,8 +139,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
         } catch (e) {
           displayMessageToUser(
             context,
-            "Error fetching user data.",
-            "Something went wrong. Please try again.",
+            AppLocalizations.of(context)!.error_fetching_data,
+            AppLocalizations.of(context)!.try_again,
           );
           setState(() {
             _isLoading = false;
@@ -150,8 +150,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
       } else {
         displayMessageToUser(
           context,
-          "User not authenticated.",
-          "Please log in to continue.",
+          AppLocalizations.of(context)!.user_not_authenticated,
+          AppLocalizations.of(context)!.login_to_continue,
         );
         setState(() {
           _isLoading = false;
@@ -161,8 +161,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
     } else {
       displayMessageToUser(
         context,
-        "Couldn't complete your request.",
-        "Please allow location access to proceed.",
+        AppLocalizations.of(context)!.location_error,
+        AppLocalizations.of(context)!.allow_location,
       );
       setState(() {
         _isLoading = false;
@@ -175,8 +175,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
     });
     displayMessageToUser(
       context,
-      "Announcement Sent",
-      "Your proclamation is under review. Thank you for helping us keeping the streets safe.",
+      AppLocalizations.of(context)!.announcement_sent,
+      AppLocalizations.of(context)!.announcement_message,
       color: Colors.green,
       onPressed: () {
         Navigator.of(context).pop();
@@ -236,40 +236,45 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
   }
 
   Widget _buildLicensePlateInput() {
-    return Column(
-      children: [
-        // Arabic Letters - Right to Left
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            return _buildTextField(
-              _letterControllers[2 - index], // Reverse order for Arabic letters
-              _letterFocusNodes[2 - index],
-              index > 0
-                  ? _letterFocusNodes[2 - index + 1]
-                  : _numberFocusNodes[0],
-              1,
-              "أ",
-              true,
-            );
-          }),
-        ),
-        const SizedBox(height: 10),
-        // English Numbers - Left to Right
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(4, (index) {
-            return _buildTextField(
-              _numberControllers[index],
-              _numberFocusNodes[index],
-              index < 3 ? _numberFocusNodes[index + 1] : null,
-              1,
-              "0",
-              false,
-            );
-          }),
-        ),
-      ],
+    return Localizations.override(
+      context: context,
+      locale: Locale('en'),
+      child: Column(
+        children: [
+          // Arabic Letters - Right to Left
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(3, (index) {
+              return _buildTextField(
+                _letterControllers[2 -
+                    index], // Reverse order for Arabic letters
+                _letterFocusNodes[2 - index],
+                index > 0
+                    ? _letterFocusNodes[2 - index + 1]
+                    : _numberFocusNodes[0],
+                1,
+                "أ",
+                true,
+              );
+            }),
+          ),
+          const SizedBox(height: 10),
+          // English Numbers - Left to Right
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(4, (index) {
+              return _buildTextField(
+                _numberControllers[index],
+                _numberFocusNodes[index],
+                index < 3 ? _numberFocusNodes[index + 1] : null,
+                1,
+                "0",
+                false,
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 
@@ -292,8 +297,8 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                "Please enter the license plate number:",
+              Text(
+                AppLocalizations.of(context)!.enter_plate_number,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -317,7 +322,7 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
                   maxLines: 3,
                   style: TextStyle(fontSize: 16),
                   decoration: InputDecoration(
-                    hintText: "Add a comment...",
+                    hintText: AppLocalizations.of(context)!.add_comment,
                     hintStyle: TextStyle(color: Colors.grey[600]),
                     prefixIcon: Icon(Icons.comment, color: Colors.grey[700]),
                     border: OutlineInputBorder(
@@ -351,7 +356,7 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
                 child:
                     _isLoading
                         ? CircularProgressIndicator(color: Colors.white)
-                        : Text("Confirm"),
+                        : Text(AppLocalizations.of(context)!.confirm),
               ),
             ],
           ),

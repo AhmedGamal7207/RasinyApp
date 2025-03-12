@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rasiny_app/screens/plate_number_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class CaptureCarScreen extends StatefulWidget {
   final String title;
@@ -49,8 +50,8 @@ class _CaptureCarScreenState extends State<CaptureCarScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              "Please capture the car ensuring the plate number, surrounding environment, and violation case are clearly visible.",
+            Text(
+              AppLocalizations.of(context)!.capture_instruction,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
@@ -62,7 +63,7 @@ class _CaptureCarScreenState extends State<CaptureCarScreen> {
             ElevatedButton.icon(
               onPressed: _capturePhoto,
               icon: const Icon(Icons.camera),
-              label: const Text("Capture Photo"),
+              label: Text(AppLocalizations.of(context)!.capture_photo),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 foregroundColor: Colors.white,

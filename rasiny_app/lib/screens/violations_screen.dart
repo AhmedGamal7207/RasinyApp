@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'show_violations_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class ViolationsScreen extends StatefulWidget {
   @override
@@ -61,6 +62,7 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
             borderSide: const BorderSide(color: Colors.black, width: 2),
           ),
         ),
+
         onChanged: (value) {
           if (value.isNotEmpty && nextFocusNode != null) {
             FocusScope.of(context).requestFocus(nextFocusNode);
@@ -71,38 +73,45 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
   }
 
   Widget _buildLicensePlateInput() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            return _buildTextField(
-              _letterControllers[2 - index],
-              _letterFocusNodes[2 - index],
-              index > 0
-                  ? _letterFocusNodes[2 - index + 1]
-                  : _numberFocusNodes[0],
-              1,
-              "أ",
-              true,
-            );
-          }),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(4, (index) {
-            return _buildTextField(
-              _numberControllers[index],
-              _numberFocusNodes[index],
-              index < 3 ? _numberFocusNodes[index + 1] : null,
-              1,
-              "0",
-              false,
-            );
-          }),
-        ),
-      ],
+    return Localizations.override(
+      context: context,
+      locale: Locale('en'),
+      child: Column(
+        children: [
+          // Arabic Letters - Right to Left
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(3, (index) {
+              return _buildTextField(
+                _letterControllers[2 -
+                    index], // Reverse order for Arabic letters
+                _letterFocusNodes[2 - index],
+                index > 0
+                    ? _letterFocusNodes[2 - index + 1]
+                    : _numberFocusNodes[0],
+                1,
+                "أ",
+                true,
+              );
+            }),
+          ),
+          const SizedBox(height: 10),
+          // English Numbers - Left to Right
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(4, (index) {
+              return _buildTextField(
+                _numberControllers[index],
+                _numberFocusNodes[index],
+                index < 3 ? _numberFocusNodes[index + 1] : null,
+                1,
+                "0",
+                false,
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 
@@ -129,14 +138,17 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Check Violations"), centerTitle: true),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.check_violations),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              "Enter your license plate number to check for violations:",
+            Text(
+              AppLocalizations.of(context)!.enter_plate_check_violations,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -156,7 +168,7 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text("Search"),
+              child: Text(AppLocalizations.of(context)!.search),
             ),
           ],
         ),

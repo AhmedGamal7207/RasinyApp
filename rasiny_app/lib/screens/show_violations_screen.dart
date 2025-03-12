@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rasiny_app/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class ShowViolationsScreen extends StatefulWidget {
   final String plateNumber;
@@ -27,10 +28,13 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
   Future<void> _fetchViolations() async {
     try {
       final firestore = FirebaseFirestore.instance;
-      final featuresTitles =
-          Constants
-              .featuresTitles
-              .keys; // Assuming Constants.featuresTitles is a Map
+      final featuresTitles = [
+        "parking",
+        "tint",
+        "stickers",
+        "wrong_way",
+        "modified",
+      ];
 
       for (String collection in featuresTitles) {
         final plateRef = firestore
@@ -43,9 +47,7 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
           }
         }
       }
-    } catch (e) {
-      print("Error fetching violations: $e");
-    }
+    } catch (e) {}
 
     setState(() {
       _isLoading = false;
@@ -73,22 +75,22 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              "${data['violation']} Violation",
+              "${Localizations.localeOf(context).languageCode == 'en' ? data['violation'] : Constants.violationEnglish2Arabic[data['violation']]}",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             if (data['comment'] != null && data['comment'].isNotEmpty)
               Text(
-                "User Comment: ${data['comment']}",
+                "${AppLocalizations.of(context)!.user_comment}: ${data['comment']}",
                 style: TextStyle(fontSize: 14, color: Colors.grey[700]),
               ),
 
             Text(
-              "Status: ${data['status']}",
+              "${AppLocalizations.of(context)!.status}: ${Localizations.localeOf(context).languageCode == 'en' ? data['status'] : Constants.statusEnglish2Arabic[data['status']]}",
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             Text(
-              "Date: ${DateFormat.yMMMd().format(data['createdAt'].toDate())}",
+              "${AppLocalizations.of(context)!.date}: ${DateFormat.yMMMd().format(data['createdAt'].toDate())}",
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 10),
@@ -98,7 +100,7 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
                     "https://www.google.com/maps/search/?api=1&query=${data["latitude"]},${data["longitude"]}";
                 launch(mapsUrl);
               },
-              child: Text("View Location"),
+              child: Text(AppLocalizations.of(context)!.view_location),
             ),
           ],
         ),
@@ -109,14 +111,18 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Violations - ${widget.plateNumber}")),
+      appBar: AppBar(
+        title: Text(
+          "${AppLocalizations.of(context)!.violations} - ${widget.plateNumber}",
+        ),
+      ),
       body:
           _isLoading
               ? Center(child: CircularProgressIndicator())
               : violations.isEmpty
               ? Center(
                 child: Text(
-                  "No Violations Found!",
+                  AppLocalizations.of(context)!.no_violations,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               )

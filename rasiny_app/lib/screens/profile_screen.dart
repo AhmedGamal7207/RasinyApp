@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rasiny_app/services/shared_preferences.dart';
+import 'package:rasiny_app/utils/common_functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -9,11 +12,13 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   Map<String, String?> userData = {};
   bool isLoading = true;
+  String _selectedLanguage = 'en';
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadLanguage();
   }
 
   Future<void> _loadUserData() async {
@@ -29,9 +34,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error loading user data: $e");
       setState(() => isLoading = false);
     }
+  }
+
+  Future<void> _loadLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedLanguage = prefs.getString('language') ?? 'en';
+    });
   }
 
   @override
@@ -42,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          "Profile",
+          AppLocalizations.of(context)!.profile,
           style: TextStyle(
             color: Colors.black,
             fontSize: 22,
@@ -84,9 +95,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    _buildProfileItem("Name", userData["name"]!),
-                    _buildProfileItem("Phone", userData["phone"]!),
-                    _buildProfileItem("National ID", userData["nationalID"]!),
+                    _buildProfileItem(
+                      AppLocalizations.of(context)!.name,
+                      userData["name"]!,
+                    ),
+                    _buildProfileItem(
+                      AppLocalizations.of(context)!.phone_number,
+                      userData["phone"]!,
+                    ),
+                    _buildProfileItem(
+                      AppLocalizations.of(context)!.national_id,
+                      userData["nationalID"]!,
+                    ),
+                    _buildLanguageSelector(),
                     SizedBox(height: 30),
                   ],
                 ),
@@ -123,6 +144,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           leading: Icon(Icons.info_outline, color: Colors.grey),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: ListTile(
+          title: Text(
+            AppLocalizations.of(context)!.language,
+            style: TextStyle(color: Colors.blueGrey, fontSize: 16),
+          ),
+          subtitle: DropdownButton<String>(
+            value: _selectedLanguage,
+            items: [
+              DropdownMenuItem(value: 'en', child: Text('English')),
+              DropdownMenuItem(value: 'ar', child: Text('العربية')),
+            ],
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                changeLanguage(newValue);
+                if (newValue != _selectedLanguage) {
+                  displayMessageToUser(
+                    context,
+                    AppLocalizations.of(context)!.language_change_title,
+                    AppLocalizations.of(context)!.language_change_message,
+                    color: Colors.grey,
+                  );
+                }
+
+                setState(() {
+                  _selectedLanguage = newValue;
+                });
+              }
+            },
+          ),
+          leading: Icon(Icons.language, color: Colors.grey),
         ),
       ),
     );

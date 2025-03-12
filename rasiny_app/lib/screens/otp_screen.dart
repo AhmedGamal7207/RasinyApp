@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:rasiny_app/screens/sign_in_screen.dart';
 import 'package:rasiny_app/services/firestore_service.dart';
 import 'package:rasiny_app/utils/common_functions.dart';
@@ -26,12 +27,13 @@ class OtpScreen extends StatelessWidget {
     BuildContext context,
   ) {
     String otpCode = controllers.map((c) => c.text).join();
+    final local = AppLocalizations.of(context)!;
 
     if (otpCode.length < 6) {
       displayMessageToUser(
         context,
-        "Verfication Code Error",
-        "Please fill in the verfication code correctly.",
+        local.verification_code_error_title,
+        local.verification_code_error_message,
       );
       return;
     }
@@ -40,18 +42,20 @@ class OtpScreen extends StatelessWidget {
     } else {
       displayMessageToUser(
         context,
-        "Wrong Verfication Code",
-        "The verfication code you have entered isn't correct.",
+        local.wrong_verification_code_title,
+        local.wrong_verification_code_message,
       );
       return;
     }
   }
 
   void register(BuildContext context) async {
+    final local = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
     try {
@@ -61,19 +65,15 @@ class OtpScreen extends StatelessWidget {
       );
       FirestoreService users = FirestoreService();
       await users.addUser(name!, nationalID!, email!, phone!);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Account has been created successully, Sign In Please.",
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(local.account_created_success)));
       Navigator.pop(context);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) {
-            return SignInScreen();
+            return const SignInScreen();
           },
         ),
       );
@@ -81,14 +81,16 @@ class OtpScreen extends StatelessWidget {
       Navigator.pop(context);
       displayMessageToUser(
         context,
-        "Network Error",
-        "Please check your network connection and try again.",
+        local.network_error_title,
+        local.network_error_message,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
+
     List<TextEditingController> otpControllers = List.generate(
       6,
       (index) => TextEditingController(),
@@ -106,9 +108,7 @@ class OtpScreen extends StatelessWidget {
                 height: double.infinity,
               ),
               Container(
-                color: Colors.black.withOpacity(
-                  0.5,
-                ), // Adjust the opacity (0.0 - 1.0)
+                color: Colors.black.withOpacity(0.5),
                 width: double.infinity,
                 height: double.infinity,
               ),
@@ -119,15 +119,15 @@ class OtpScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('OTP', style: Constants.kLoginTitleStyle),
+                Text(local.otp_title, style: Constants.kLoginTitleStyle),
                 const SizedBox(height: 10),
                 SizedBox(
-                  width: double.infinity, // Ensure it takes full width
+                  width: double.infinity,
                   child: FittedBox(
-                    fit: BoxFit.cover, // Prevents text from overflowing
+                    fit: BoxFit.cover,
                     child: Text(
-                      'The OTP Message Sent To The Following Number:',
-                      style: TextStyle(
+                      local.otp_message,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontFamily: "smallTextFont",
@@ -135,26 +135,17 @@ class OtpScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(
-                      0.3,
-                    ), // Light opacity white box
+                    color: Colors.white.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(0),
+                    padding: const EdgeInsets.all(0),
                     child: Container(
-                      color: const Color.fromARGB(
-                        217,
-                        219,
-                        196,
-                        181,
-                      ), // Background color
-                      padding: const EdgeInsets.all(
-                        8,
-                      ), // Optional: adds some spacing inside the container
+                      color: const Color.fromARGB(217, 219, 196, 181),
+                      padding: const EdgeInsets.all(8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -162,11 +153,11 @@ class OtpScreen extends StatelessWidget {
                           const Icon(
                             Icons.phone_forwarded_outlined,
                             color: Colors.black,
-                          ), // Icon color
+                          ),
                           const SizedBox(width: 10),
                           Text(
                             phone!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
@@ -189,9 +180,9 @@ class OtpScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'SMS has been sent on your phone to verify the registered mobile number with the app',
-                  style: TextStyle(
+                Text(
+                  local.otp_sms_notice,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontFamily: "smallTextFont",
@@ -201,23 +192,22 @@ class OtpScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 50),
                 CustomButton(
-                  text: 'Verify',
+                  text: local.verify,
                   onPressed: () {
                     verify_method(otpControllers, context);
                   },
                 ),
-
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/'),
-                  child: const Text.rich(
+                  child: Text.rich(
                     TextSpan(
-                      text: "Already Have Account? ",
-                      style: TextStyle(color: Colors.white),
+                      text: local.already_have_account,
+                      style: const TextStyle(color: Colors.white),
                       children: [
                         TextSpan(
-                          text: "SIGN IN",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          text: local.sign_in,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -241,12 +231,7 @@ class OtpScreen extends StatelessWidget {
       width: 40,
       height: 50,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(
-          217,
-          219,
-          196,
-          181,
-        ), // Color with 72% opacity
+        color: const Color.fromARGB(217, 219, 196, 181),
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextField(
@@ -259,11 +244,6 @@ class OtpScreen extends StatelessWidget {
           counterText: '',
           border: InputBorder.none,
         ),
-        onChanged: (value) {
-          if (value.isNotEmpty && nextController != null) {
-            FocusScope.of(context).nextFocus();
-          }
-        },
       ),
     );
   }

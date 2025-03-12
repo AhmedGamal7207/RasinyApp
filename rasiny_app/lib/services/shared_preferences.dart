@@ -22,3 +22,13 @@ Future<Map<String, String?>> getUserData() async {
     "nationalID": prefs.getString('nationalID') ?? '',
   };
 }
+
+Future<void> changeLanguage(String languageCode) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('language', languageCode);
+}
+
+Future<String?> getLanguage() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('language');
+}

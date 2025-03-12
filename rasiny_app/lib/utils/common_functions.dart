@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 void displayMessageToUser(
   BuildContext context,
@@ -52,10 +53,10 @@ void displayMessageToUser(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               child: Text(
-                "Got it!",
+                AppLocalizations.of(context)!.gotIt,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
