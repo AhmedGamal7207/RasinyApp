@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:rasiny_first_website/firebase_options.dart';
 import 'package:rasiny_first_website/services/firestore_service.dart';
+import 'dart:html' as html;
 
 class ViolationsDashboard extends StatefulWidget {
   const ViolationsDashboard({super.key});
@@ -18,6 +19,7 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
   List<Map<String, dynamic>> _filteredViolations = [];
   bool _isLoading = true;
   String _selectedFilter = 'All';
+
   final List<String> _filterOptions = [
     'All',
     'Under Review',
@@ -120,6 +122,15 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
   String _formatTimestamp(Timestamp timestamp) {
     final dateTime = timestamp.toDate();
     return DateFormat('MMM dd, yyyy - HH:mm').format(dateTime);
+  }
+
+  // Helper function to launch Google Maps
+  void launchMapsUrl(double lat, double lng) async {
+    print(lat);
+    print(lng);
+    String mapsUrl =
+        "https://www.google.com/maps/search/?api=1&query=$lat,$lng";
+    html.window.open(mapsUrl, "_blank");
   }
 
   @override
@@ -282,12 +293,6 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Vehicle Information
-                _buildInfoSection('Vehicle Information', [
-                  'License Plate: ${violation['letters'] ?? '-'} ${violation['numbers'] ?? '-'}',
-                  'Violation Type: ${violation['violation'] ?? '-'}',
-                ]),
-
-                const Divider(),
 
                 // Reporter Information
                 _buildInfoSection('Reporter Information', [
@@ -297,11 +302,44 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
 
                 const Divider(),
 
-                // Date and Location
-                _buildInfoSection('Date and Location', [
-                  'Date: ${violation['createdAt'] != null ? _formatTimestamp(violation['createdAt']) : '-'}',
-                  'Location: Lat ${violation['latitude'] ?? '-'}, Lng ${violation['longitude'] ?? '-'}',
-                ]),
+                _buildInfoSection(
+                  'Date and Location',
+                  [
+                    'Date: ${violation['createdAt'] != null ? _formatTimestamp(violation['createdAt']) : '-'}',
+                    // Replace this line:
+                    // 'Location: Lat ${violation['latitude'] ?? '-'}, Lng ${violation['longitude'] ?? '-'}',
+                  ],
+                  // Add this as an additional widget:
+                  additionalWidget: Row(
+                    children: [
+                      Text("Location: "),
+                      InkWell(
+                        onTap: () {
+                          launchMapsUrl(
+                            violation['latitude'],
+                            violation['longitude'],
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.map, size: 16, color: Colors.blue),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Open Location in Google Maps',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 if (violation['comment'] != null &&
                     violation['comment'].toString().isNotEmpty) ...[
@@ -310,7 +348,12 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
                 ],
 
                 const Divider(),
+                _buildInfoSection('Vehicle Information', [
+                  'License Plate: ${violation['letters'] ?? '-'} ${violation['numbers'] ?? '-'}',
+                  'Violation Type: ${violation['violation'] ?? '-'}',
+                ]),
 
+                const Divider(),
                 // Images
                 Text(
                   'Images',
@@ -408,7 +451,11 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
     );
   }
 
-  Widget _buildInfoSection(String title, List<String> details) {
+  Widget _buildInfoSection(
+    String title,
+    List<String> details, {
+    Widget? additionalWidget,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -427,6 +474,7 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
             child: Text(detail),
           ),
         ),
+        if (additionalWidget != null) additionalWidget,
       ],
     );
   }
