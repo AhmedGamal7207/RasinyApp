@@ -126,8 +126,6 @@ class ViolationsDashboardState extends State<ViolationsDashboard> {
 
   // Helper function to launch Google Maps
   void launchMapsUrl(double lat, double lng) async {
-    print(lat);
-    print(lng);
     String mapsUrl =
         "https://www.google.com/maps/search/?api=1&query=$lat,$lng";
     html.window.open(mapsUrl, "_blank");
