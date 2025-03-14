@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -132,9 +134,19 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(height: 15),
                     FeatureTile(
                       icon: Icons.warning,
-                      title: local.stickers,
+                      title: local.wrong_way,
                       subtitle: AppLocalizations.of(context)!.wrong_way_driving,
                       color: Colors.orangeAccent,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return CaptureCarScreen(title: local.wrong_way);
+                            },
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 15),
                     FeatureTile(
@@ -143,6 +155,16 @@ class HomeScreen extends StatelessWidget {
                       subtitle:
                           AppLocalizations.of(context)!.illegally_modified,
                       color: Colors.purpleAccent,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return CaptureCarScreen(title: local.modified);
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

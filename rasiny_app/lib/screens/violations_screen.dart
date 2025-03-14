@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rasiny_app/utils/common_functions.dart';
 import 'show_violations_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
@@ -122,6 +123,26 @@ class _ViolationsScreenState extends State<ViolationsScreen> {
     if (letters.isEmpty || numbers.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please enter a valid plate number")),
+      );
+      return;
+    }
+
+    // Validate letters: Only Arabic letters allowed (No English letters, numbers, symbols, or spaces)
+    if (!RegExp(r'^[\u0600-\u06FF]+$').hasMatch(letters)) {
+      displayMessageToUser(
+        context,
+        AppLocalizations.of(context)!.plate_number_error_title,
+        AppLocalizations.of(context)!.plate_number_letters_error,
+      );
+      return;
+    }
+
+    // Validate numbers: Only English digits allowed (No letters, symbols, spaces, or Arabic digits)
+    if (!RegExp(r'^\d+$').hasMatch(numbers)) {
+      displayMessageToUser(
+        context,
+        AppLocalizations.of(context)!.plate_number_error_title,
+        AppLocalizations.of(context)!.plate_number_numbers_error,
       );
       return;
     }

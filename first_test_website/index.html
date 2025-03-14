@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firestore CRUD</title>
+</head>
+<body>
+    <h1>Firestore CRUD</h1>
+    <input type="text" id="name" placeholder="Enter Name">
+    <button onclick="addData()">Add Data</button>
+    <ul id="dataList"></ul>
+
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBytIgLorN752b9T--IIA1g_ThqafZhkhU",
+            authDomain: "rasiny-app.firebaseapp.com",
+            projectId: "rasiny-app",
+            storageBucket: "rasiny-app.firebasestorage.app",
+            messagingSenderId: "187923177852",
+            appId: "1:187923177852:web:89f554d08082b35996c4f9",
+            measurementId: "G-K4RR2L3VEN"
+            };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Add Data to Firestore
+        async function addData() {
+            let name = document.getElementById("name").value;
+            if (!name) return alert("Enter a name!");
+            await addDoc(collection(db, "users"), { name });
+            alert("Data Added!");
+            location.reload();
+        }
+
+        // Fetch and Display Data
+        async function fetchData() {
+            let dataList = document.getElementById("dataList");
+            dataList.innerHTML = "";
+            const querySnapshot = await getDocs(collection(db, "users"));
+            querySnapshot.forEach((doc) => {
+                let li = document.createElement("li");
+                li.innerHTML = `${doc.data().name} <button onclick="deleteData('${doc.id}')">Delete</button>`;
+                dataList.appendChild(li);
+            });
+        }
+
+        // Delete Data
+        async function deleteData(id) {
+            await deleteDoc(doc(db, "users", id));
+            alert("Data Deleted!");
+            location.reload();
+        }
+
+        // Load Data on Page Load
+        fetchData();
+    </script>
+</body>
+</html>

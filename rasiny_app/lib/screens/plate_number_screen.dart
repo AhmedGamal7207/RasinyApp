@@ -12,12 +12,14 @@ import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class PlateNumberScreen extends StatefulWidget {
   final File imageFile;
+  final File imageFile2;
   final String title;
 
   const PlateNumberScreen({
     super.key,
     required this.imageFile,
     required this.title,
+    required this.imageFile2,
   });
 
   @override
@@ -76,6 +78,25 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
       );
       return;
     }
+    // Validate letters: Only Arabic letters allowed (No English letters, numbers, symbols, or spaces)
+    if (!RegExp(r'^[\u0600-\u06FF]+$').hasMatch(letters)) {
+      displayMessageToUser(
+        context,
+        AppLocalizations.of(context)!.plate_number_error_title,
+        AppLocalizations.of(context)!.plate_number_letters_error,
+      );
+      return;
+    }
+
+    // Validate numbers: Only English digits allowed (No letters, symbols, spaces, or Arabic digits)
+    if (!RegExp(r'^\d+$').hasMatch(numbers)) {
+      displayMessageToUser(
+        context,
+        AppLocalizations.of(context)!.plate_number_error_title,
+        AppLocalizations.of(context)!.plate_number_numbers_error,
+      );
+      return;
+    }
     setState(() {
       _isLoading = true;
     });
@@ -96,13 +117,18 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
 
           if (userDoc.exists) {
             String phone = userDoc.data()?['phone'] ?? "No phone available";
+            String email = userDoc.data()?['email'] ?? "No phone available";
             String nationalID =
                 userDoc.data()?['nationalID'] ?? "No ID available";
             String? imageUrl = await uploadImageToCloudinary(
               widget.imageFile,
               Constants.inverseFeaturesTitles[widget.title]!,
             );
-            if (imageUrl != null) {
+            String? imageUrl2 = await uploadImageToCloudinary(
+              widget.imageFile2,
+              Constants.inverseFeaturesTitles[widget.title]!,
+            );
+            if (imageUrl != null && imageUrl2 != null) {
               await FirestoreService.addAnnouncement(
                 letters,
                 numbers,
@@ -112,8 +138,10 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
                 phone,
                 nationalID,
                 imageUrl,
+                imageUrl2,
                 _commentController.text,
               );
+              await FirestoreService.increaseUserNumberOfAnnouncements(email);
             } else {
               displayMessageToUser(
                 context,
@@ -281,20 +309,48 @@ class _PlateNumberScreenState extends State<PlateNumberScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        title: Text(widget.title),
+        leading: BackButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return HomeScreen();
+                },
+              ),
+            );
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.file(
-                  widget.imageFile,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.file(
+                      widget.imageFile,
+                      height: 200,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.file(
+                      widget.imageFile2,
+                      height: 200,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Text(

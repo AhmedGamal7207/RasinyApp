@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _loadLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     String? languageCode =
-        prefs.getString('language') ?? 'en'; // Default to English
+        prefs.getString('language') ??
+        PlatformDispatcher.instance.locale.languageCode; // Default to Device
     setState(() {
       _locale = Locale(languageCode);
     });

@@ -97,11 +97,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             );
                             return;
                           }
+                          // Check if name contains only letters (no numbers or symbols)
+                          if (!RegExp(
+                            r'^[a-zA-Z\s]+$',
+                          ).hasMatch(nameController.text)) {
+                            displayMessageToUser(
+                              context,
+                              localizations.name_error_title,
+                              localizations.name_invalid_message,
+                            );
+                            return;
+                          }
                           if (idController.text.isEmpty) {
                             displayMessageToUser(
                               context,
                               localizations.id_error_title,
                               localizations.id_empty_error,
+                            );
+                            return;
+                          }
+                          // Check if ID contains only numbers (no letters, symbols, or spaces)
+                          if (!RegExp(r'^\d+$').hasMatch(idController.text)) {
+                            displayMessageToUser(
+                              context,
+                              localizations.id_error_title,
+                              localizations.id_invalid_error,
                             );
                             return;
                           }
@@ -121,11 +141,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             );
                             return;
                           }
-                          if (phoneController.text.length < 10) {
+                          if (phoneController.text.length != 11) {
                             displayMessageToUser(
                               context,
                               localizations.phone_error_title,
                               localizations.phone_length_error,
+                            );
+                            return;
+                          }
+                          // Check if phone number contains only numbers (no letters, symbols, or spaces)
+                          if (!RegExp(
+                            r'^\d+$',
+                          ).hasMatch(phoneController.text)) {
+                            displayMessageToUser(
+                              context,
+                              localizations.phone_error_title,
+                              localizations.phone_invalid_error,
                             );
                             return;
                           }

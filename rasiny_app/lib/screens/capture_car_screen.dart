@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rasiny_app/screens/plate_number_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:rasiny_app/utils/common_functions.dart';
 
 class CaptureCarScreen extends StatefulWidget {
   final String title;
@@ -14,30 +15,71 @@ class CaptureCarScreen extends StatefulWidget {
 }
 
 class _CaptureCarScreenState extends State<CaptureCarScreen> {
-  File? _capturedImage;
+  File? _capturedImage1;
+  File? _capturedImage2;
   final ImagePicker _picker = ImagePicker();
 
-  // Function to open camera and take photo
-  Future<void> _capturePhoto() async {
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    if (photo != null) {
-      File imageFile = File(photo.path);
-      setState(() {
-        _capturedImage = imageFile;
-      });
-      _navigateToPlateNumberScreen(imageFile);
-    }
+  // Function to capture the first photo
+  Future<void> _captureFirstPhoto() async {
+    displayMessageToUser(
+      context,
+      AppLocalizations.of(context)!.capture_first_image,
+      AppLocalizations.of(context)!.capture_first_image_message,
+      onPressed: () async {
+        final XFile? photo = await _picker.pickImage(
+          source: ImageSource.camera,
+        );
+        if (photo != null) {
+          File imageFile = File(photo.path);
+          setState(() {
+            _capturedImage1 = imageFile;
+          });
+
+          // After first image is taken, show dialog for the second image
+          _captureSecondPhoto();
+        }
+      },
+      color: Colors.blue,
+    );
+  }
+
+  // Function to capture the second photo
+  Future<void> _captureSecondPhoto() async {
+    displayMessageToUser(
+      context,
+      AppLocalizations.of(context)!.capture_second_image,
+      AppLocalizations.of(context)!.capture_second_image_message,
+      onPressed: () async {
+        final XFile? photo = await _picker.pickImage(
+          source: ImageSource.camera,
+        );
+        if (photo != null) {
+          File imageFile = File(photo.path);
+          setState(() {
+            _capturedImage2 = imageFile;
+          });
+
+          // Navigate to the next screen with both images
+          _navigateToPlateNumberScreen(_capturedImage1!, _capturedImage2!);
+        }
+      },
+      color: Colors.blue,
+    );
   }
 
   // Navigate to PlateNumberScreen
-  void _navigateToPlateNumberScreen(File imageFile) {
-    Navigator.pushReplacement(
+  void _navigateToPlateNumberScreen(File imageFile, File imageFile2) {
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder:
-            (context) =>
-                PlateNumberScreen(imageFile: imageFile, title: widget.title),
+            (context) => PlateNumberScreen(
+              imageFile: imageFile,
+              title: widget.title,
+              imageFile2: imageFile2,
+            ),
       ),
+      (route) => false,
     );
   }
 
@@ -56,12 +98,10 @@ class _CaptureCarScreenState extends State<CaptureCarScreen> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            _capturedImage != null
-                ? Image.file(_capturedImage!, height: 200)
-                : const Icon(Icons.camera_alt, size: 100, color: Colors.grey),
+            const Icon(Icons.camera_alt, size: 100, color: Colors.grey),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: _capturePhoto,
+              onPressed: _captureFirstPhoto,
               icon: const Icon(Icons.camera),
               label: Text(AppLocalizations.of(context)!.capture_photo),
               style: ElevatedButton.styleFrom(

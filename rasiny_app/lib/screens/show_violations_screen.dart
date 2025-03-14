@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rasiny_app/screens/home_screen.dart';
 import 'package:rasiny_app/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
@@ -64,14 +65,33 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                data['imageUrl'],
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.contain,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      data['imageUrl'],
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      data['imageUrl2'],
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Text(
@@ -114,6 +134,18 @@ class _ShowViolationsScreenState extends State<ShowViolationsScreen> {
       appBar: AppBar(
         title: Text(
           "${AppLocalizations.of(context)!.violations} - ${widget.plateNumber}",
+        ),
+        leading: BackButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return HomeScreen();
+                },
+              ),
+            );
+          },
         ),
       ),
       body:

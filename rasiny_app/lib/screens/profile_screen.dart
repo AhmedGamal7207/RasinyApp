@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rasiny_app/services/shared_preferences.dart';
 import 'package:rasiny_app/utils/common_functions.dart';
@@ -10,7 +12,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Map<String, String?> userData = {};
+  Map<String, dynamic> userData = {};
   bool isLoading = true;
   String _selectedLanguage = 'en';
 
@@ -24,18 +26,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadUserData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      setState(() {
+      setState(() async {
         userData = {
           "email": prefs.getString('email') ?? "Not Available",
           "phone": prefs.getString('phone') ?? "Not Available",
           "name": prefs.getString('name') ?? "Not Available",
           "nationalID": prefs.getString('nationalID') ?? "Not Available",
+          "wallet": "",
+          "number_of_announcements_made": "",
         };
+
         isLoading = false;
       });
     } catch (e) {
       setState(() => isLoading = false);
     }
+
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      try {
+        DocumentSnapshot<Map<String, dynamic>> userDoc =
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(currentUser.email)
+                .get();
+        if (userDoc.exists) {
+          dynamic wallet =
+              userDoc.data()?['wallet'] ??
+              "Couldn't fetch data, please login again";
+          dynamic number_of_announcements_made =
+              userDoc.data()?['number_of_announcements_made'] ??
+              "Couldn't fetch data, please login again";
+          userData["wallet"] = wallet;
+          userData["number_of_announcements_made"] =
+              number_of_announcements_made;
+        } else {
+          dynamic wallet = "Couldn't fetch data, please login again";
+          dynamic number_of_announcements_made =
+              "Couldn't fetch data, please login again";
+          userData["wallet"] = wallet;
+          userData["number_of_announcements_made"] =
+              number_of_announcements_made;
+        }
+      } catch (e) {
+        print("Error happened in loading user data in profile: ");
+        dynamic wallet = "${e}";
+        dynamic number_of_announcements_made = "${e}";
+        userData["wallet"] = wallet;
+        userData["number_of_announcements_made"] = number_of_announcements_made;
+      }
+    }
+
+    setState(() {});
   }
 
   Future<void> _loadLanguage() async {
@@ -106,6 +149,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildProfileItem(
                       AppLocalizations.of(context)!.national_id,
                       userData["nationalID"]!,
+                    ),
+                    _buildProfileItem(
+                      AppLocalizations.of(context)!.wallet,
+                      "${userData["wallet"]!}",
+                    ),
+                    _buildProfileItem(
+                      AppLocalizations.of(context)!.number_of_announcements,
+                      "${userData["number_of_announcements_made"]!}",
                     ),
                     _buildLanguageSelector(),
                     SizedBox(height: 30),
